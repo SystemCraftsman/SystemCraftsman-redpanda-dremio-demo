@@ -1,1 +1,1 @@
-# SystemCraftsman-redpanda-dremio-demo
+# redpanda-dremio-demo
