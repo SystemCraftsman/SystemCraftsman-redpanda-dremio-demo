@@ -1,0 +1,37 @@
+input:
+  kafka:
+    addresses:
+      - redpanda:9092
+    topics:
+      - retail-sales
+    consumer_group: sales-consumer-group
+pipeline:
+  processors:
+    - sleep:
+        duration: 50ms
+    - mapping: |
+        root.transaction_id = this.transaction_id
+        root.store_id = this.store_id
+        root.product_id = this.product_id
+        root.quantity = this.quantity
+        root.price = this.price
+        root.timestamp = this.timestamp
+output:
+  label: ""
+  aws_s3:
+    bucket: "retail-sales-xxx"
+    path: sales${!count("files")}
+    tags: {}
+    content_type: application/json
+    metadata:
+      exclude_prefixes: []
+    region: "us-west-1"
+    credentials:
+      id: "xxx"
+      secret: "xxx"
+      from_ec2_role: false
+    batching:
+      count: 100
+      processors:
+        - archive:
+            format: json_array
